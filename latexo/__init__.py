@@ -15,6 +15,19 @@ from latexo.plan import (
     UserFact,
     plan_edit,
 )
+from latexo.review import (
+    Approval,
+    CommitResult,
+    RepairResult,
+    RepairSession,
+    UndoResult,
+    VersionRecord,
+    commit_approved,
+    issue_approval,
+    load_records,
+    repair_candidate,
+    undo_last,
+)
 from latexo.root import RootResolution, resolve_root
 from latexo.segment import SourceSpan, segment_source
 from latexo.snapshot import (
@@ -26,12 +39,16 @@ from latexo.snapshot import (
 )
 
 __all__ = [
+    "Approval",
     "ApplyResult",
+    "CommitResult",
     "DeleteSpan",
     "EditPlan",
     "FileRecord",
     "InsertAtSpan",
     "PatchSet",
+    "RepairResult",
+    "RepairSession",
     "ReplaceSpan",
     "LocatedTarget",
     "LocationResult",
@@ -39,16 +56,23 @@ __all__ = [
     "PlanningResult",
     "RootResolution",
     "SourceSpan",
+    "UndoResult",
     "UnsafePathError",
     "ValidationReport",
+    "VersionRecord",
     "WorkspaceSnapshot",
     "UserFact",
     "apply_patchset",
+    "commit_approved",
     "compile_staging",
+    "issue_approval",
+    "load_records",
     "locate_targets",
     "plan_edit",
+    "repair_candidate",
     "resolve_in_workspace",
     "resolve_root",
     "segment_source",
     "take_snapshot",
+    "undo_last",
 ]

@@ -30,9 +30,11 @@ print(root.root_path, root.requires_clarification)
 
 `compile_staging` runs the compiler against the staging tree only. It adds `-no-shell-escape`, sets `LATEXO_NO_NETWORK=1`, and never writes the live workspace. Tests inject a recorder when TeX is not installed.
 
+`repair_candidate` allows one ordinary repair on staging and refuses a second. Missing facts ask; they do not invent. `issue_approval` / `commit_approved` bind approval to patch id, base revision, and diff hash. A live-file change after approval blocks commit. `undo_last` restores the recorded prior bytes and appends history.
+
 ## Status
 
-Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.7 are implemented and tested.
+Phase 1 (safe single-target MVP) is implemented and tested.
 
 | Slice | What it does |
 |---|---|
@@ -43,7 +45,7 @@ Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.7 are implemente
 | 1.5 Planning | Unique target plus rewrite/delete becomes an approved plan; missing facts ask |
 | 1.6 Apply | Hash-checked ops go to isolated staging plus a unified diff; live files stay put |
 | 1.7 Compile | Staging-only compile with no shell escape and no network; live files stay put |
-| 1.8 | Repair (1), approval, versions, undo |
+| 1.8 Review | One repair attempt, bound approval, version record, undo |
 
 The highest-severity failure in later slices is a polished, compiling resume that added a fact nobody supplied.
 
