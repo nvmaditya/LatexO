@@ -24,9 +24,11 @@ print(root.root_path, root.requires_clarification)
 
 `locate_targets` picks among those spans. An active selection or cursor wins when it sits in exactly one span. Otherwise a unique heading or quoted substring can win. Two equal hits require clarification. Location never invents a span the segmenter did not emit.
 
+`plan_edit` turns a unique location plus a request into a typed plan: existing span ids, replace/insert/delete, expected paths, invariants, and required approval. A new metric or employer that is not in the document and not supplied as a user fact causes an ask instead of an invented fact id.
+
 ## Status
 
-Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.4 are implemented and tested.
+Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.5 are implemented and tested.
 
 | Slice | What it does |
 |---|---|
@@ -34,7 +36,8 @@ Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.4 are implemente
 | 1.2 Root | Explicit / confirmed / unique document root, or ask |
 | 1.3 Spans | Deterministic `SourceSpan` tree: preamble, envs, sections, items, paragraphs, macros |
 | 1.4 Location | Selection/cursor first, then unique heading or quote; ties ask instead of guessing |
-| 1.5–1.8 | Plans, atomic patches, sandboxed compile, approval, undo |
+| 1.5 Planning | Unique target plus rewrite/delete becomes an approved plan; missing facts ask |
+| 1.6–1.8 | Atomic patches, sandboxed compile, approval, undo |
 
 The highest-severity failure in later slices is a polished, compiling resume that added a fact nobody supplied.
 
