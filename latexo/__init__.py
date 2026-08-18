@@ -1,3 +1,4 @@
+from latexo.compile import ValidationReport, compile_staging
 from latexo.apply import (
     ApplyResult,
     DeleteSpan,
@@ -39,9 +40,11 @@ __all__ = [
     "RootResolution",
     "SourceSpan",
     "UnsafePathError",
+    "ValidationReport",
     "WorkspaceSnapshot",
     "UserFact",
     "apply_patchset",
+    "compile_staging",
     "locate_targets",
     "plan_edit",
     "resolve_in_workspace",

@@ -29,7 +29,7 @@ Copied from the spec, not restated as taste:
 | 1.4 Active-selection-aware location | Done | Selection and cursor first. Low confidence interrupts. The patch generator cannot override location. |
 | 1.5 Structured planning | Done | The plan names existing spans, allowed facts, and invariants. Missing facts ask; they do not invent. |
 | 1.6 Span patches, atomic staging, unified diffs | Done | Apply every operation or none. Hash mismatch fails closed. Fuzzy match is diagnostic only. |
-| 1.7 Sandboxed compilation | Planned | No network, no shell escape, staged files only, resource limits. Failed staging leaves the live project unchanged. |
+| 1.7 Sandboxed compilation | Done | No network, no shell escape, staged files only, resource limits. Failed staging leaves the live project unchanged. |
 | 1.8 Repair (1), approval, versions, undo | Planned | One repair for ordinary edits. Approval is bound to patch id + base revision + diff hash. Accepted edits are reversible. |
 | Phase 2 | Later | Fact ledger and multi-target merge. Invented facts are the worst failure. |
 | Phase 3 | Later | Auto-approval only under an explicit low-risk policy. |
@@ -53,8 +53,9 @@ Done:
 - 1.4 active-selection-aware location (`latexo.locate.locate_targets`)
 - 1.5 structured planning (`latexo.plan.plan_edit`)
 - 1.6 span patches, atomic staging, unified diffs (`latexo.apply.apply_patchset`)
+- 1.7 sandboxed compilation (`latexo.compile.compile_staging`)
 
-Next: 1.7 sandboxed compilation.
+Next: 1.8 repair (1), approval, version records, undo.
 
 ## Later
 

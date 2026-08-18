@@ -28,9 +28,11 @@ print(root.root_path, root.requires_clarification)
 
 `apply_patchset` checks each operation's span hash, rejects overlap and stale revisions, then writes every change into a staging directory or writes none. The live workspace is not modified. The unified diff is live versus staged.
 
+`compile_staging` runs the compiler against the staging tree only. It adds `-no-shell-escape`, sets `LATEXO_NO_NETWORK=1`, and never writes the live workspace. Tests inject a recorder when TeX is not installed.
+
 ## Status
 
-Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.6 are implemented and tested.
+Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.7 are implemented and tested.
 
 | Slice | What it does |
 |---|---|
@@ -40,7 +42,8 @@ Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.6 are implemente
 | 1.4 Location | Selection/cursor first, then unique heading or quote; ties ask instead of guessing |
 | 1.5 Planning | Unique target plus rewrite/delete becomes an approved plan; missing facts ask |
 | 1.6 Apply | Hash-checked ops go to isolated staging plus a unified diff; live files stay put |
-| 1.7–1.8 | Sandboxed compile, approval, undo |
+| 1.7 Compile | Staging-only compile with no shell escape and no network; live files stay put |
+| 1.8 | Repair (1), approval, versions, undo |
 
 The highest-severity failure in later slices is a polished, compiling resume that added a fact nobody supplied.
 
