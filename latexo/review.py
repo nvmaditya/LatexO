@@ -8,7 +8,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from latexo.snapshot import take_snapshot
+from latexo.snapshot import UnsafePathError, resolve_in_workspace, take_snapshot
 
 
 class RepairSession:
@@ -102,11 +102,16 @@ def repair_candidate(
             attempt=session.attempts,
             error="repair budget exhausted",
         )
-    session.attempts += 1
     if correction is not None:
-        dest = staging_root / path
+        try:
+            dest = resolve_in_workspace(staging_root, path)
+        except UnsafePathError as exc:
+            return RepairResult(ok=False, attempt=session.attempts, error=str(exc))
+        session.attempts += 1
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(correction)
+        return RepairResult(ok=True, attempt=session.attempts)
+    session.attempts += 1
     return RepairResult(ok=True, attempt=session.attempts)
 
 
@@ -146,16 +151,22 @@ def commit_approved(
     blobs = _blob_dir(store_dir, record_id)
     blobs.mkdir(parents=True, exist_ok=True)
     for record in current.files:
-        src = live_root / record.path
+        src = resolve_in_workspace(live_root, record.path)
         dest = blobs / record.path
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(src.read_bytes())
 
+    pending: list[tuple[Path, Path]] = []
     for staged in staging_root.rglob("*"):
         if not staged.is_file():
             continue
         rel = staged.relative_to(staging_root).as_posix()
-        dest = live_root / rel
+        try:
+            dest = resolve_in_workspace(live_root, rel)
+        except UnsafePathError:
+            return CommitResult(ok=False, error=f"staged path escapes live: {rel}")
+        pending.append((staged, dest))
+    for staged, dest in pending:
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(staged.read_bytes())
 
@@ -187,7 +198,7 @@ def undo_last(live_root: Path, store_dir: Path) -> UndoResult:
         if not blob.is_file():
             continue
         rel = blob.relative_to(blobs).as_posix()
-        dest = live_root / rel
+        dest = resolve_in_workspace(live_root, rel)
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(blob.read_bytes())
     after = take_snapshot(live_root)

@@ -96,6 +96,38 @@ def test_repair_accepts_one_candidate_fix_and_refuses_a_second(tmp_path: Path) -
     assert (stage / "resume.tex").read_bytes().startswith(b"\\documentclass")
 
 
+def test_repair_rejects_escaping_path_and_leaves_live_untouched(tmp_path: Path) -> None:
+    live, stage, _store, path, _snap, _spans = _prep(tmp_path)
+    stage.mkdir()
+    (stage / "resume.tex").write_bytes(b"broken\n")
+    outside = tmp_path / "outside.tex"
+    outside.write_bytes(b"secret\n")
+    session = RepairSession()
+    relative = repair_candidate(
+        session,
+        reason="candidate_failure",
+        live_root=live,
+        staging_root=stage,
+        correction=b"PWNED\n",
+        path="../live/resume.tex",
+    )
+    assert relative.ok is False
+    assert path.read_bytes() == RESUME
+    assert (stage / "resume.tex").read_bytes() == b"broken\n"
+    absolute = repair_candidate(
+        session,
+        reason="candidate_failure",
+        live_root=live,
+        staging_root=stage,
+        correction=b"PWNED\n",
+        path=str(outside.resolve()),
+    )
+    assert absolute.ok is False
+    assert outside.read_bytes() == b"secret\n"
+    assert path.read_bytes() == RESUME
+    assert session.attempts == 0
+
+
 def test_missing_fact_is_ask_not_repair(tmp_path: Path) -> None:
     live, stage, _store, path, _snap, _spans = _prep(tmp_path)
     stage.mkdir()
