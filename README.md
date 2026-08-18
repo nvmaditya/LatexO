@@ -34,6 +34,8 @@ print(root.root_path, root.requires_clarification)
 
 `build_fact_ledger` extracts employers, dates, and quantities from existing spans and records caller-supplied claims as `user_message` facts. Planning only allows ledger ids. A metric that is not in the document and not supplied still requires clarification.
 
+`build_include_map` records `\input`/`\include` edges between snapshot files. Comments do not count. Paths that escape the workspace are not in-workspace edges. A missing relative target is unresolved. `resolve_root` uses that graph when more than one `\documentclass`+body exists.
+
 ## Status
 
 Phase 1 (safe single-target MVP) is implemented and tested.

@@ -1,4 +1,5 @@
 from latexo.facts import FactLedger, ResumeFact, build_fact_ledger
+from latexo.includes import IncludeEdge, IncludeMap, build_include_map
 from latexo.compile import ValidationReport, compile_staging
 from latexo.apply import (
     ApplyResult,
@@ -47,6 +48,8 @@ __all__ = [
     "EditPlan",
     "FactLedger",
     "FileRecord",
+    "IncludeEdge",
+    "IncludeMap",
     "InsertAtSpan",
     "PatchSet",
     "RepairResult",
@@ -67,6 +70,7 @@ __all__ = [
     "UserFact",
     "apply_patchset",
     "build_fact_ledger",
+    "build_include_map",
     "commit_approved",
     "compile_staging",
     "issue_approval",

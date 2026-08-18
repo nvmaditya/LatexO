@@ -41,14 +41,41 @@ def _existing_override(workspace_root: Path, candidate: str) -> str | None:
     return path.relative_to(workspace_root.resolve()).as_posix()
 
 
+def _rank_by_includes(
+    snapshot: WorkspaceSnapshot,
+    workspace_root: Path,
+    candidates: list[str],
+    active_file: str | None,
+) -> str | None:
+    from latexo.includes import build_include_map, reaches
+
+    mapped = build_include_map(snapshot, workspace_root)
+    if active_file:
+        holders = [
+            c
+            for c in candidates
+            if c == active_file or reaches(mapped.edges, c, active_file)
+        ]
+        if len(holders) == 1:
+            return holders[0]
+    includers = [
+        c
+        for c in candidates
+        if any(reaches(mapped.edges, c, other) for other in candidates if other != c)
+    ]
+    if len(includers) == 1:
+        return includers[0]
+    return None
+
+
 def resolve_root(
     snapshot: WorkspaceSnapshot,
     workspace_root: Path,
     *,
     explicit_root: str | None = None,
     confirmed_root: str | None = None,
+    active_file: str | None = None,
 ) -> RootResolution:
-    # ponytail: skip active-file root declarations and include-graph ranking until those maps exist
     for value, reason in (
         (explicit_root, "explicitly selected"),
         (confirmed_root, "previously confirmed"),
@@ -78,6 +105,19 @@ def resolve_root(
             candidates=[],
             requires_clarification=True,
             reason="no source with documentclass and document body",
+        )
+    chosen = _rank_by_includes(
+        snapshot,
+        workspace_root,
+        candidates,
+        active_file if active_file is not None else snapshot.active_file,
+    )
+    if chosen is not None:
+        return RootResolution(
+            root_path=chosen,
+            candidates=[chosen],
+            requires_clarification=False,
+            reason="include graph",
         )
     return RootResolution(
         root_path=None,
