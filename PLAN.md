@@ -31,7 +31,8 @@ Copied from the spec, not restated as taste:
 | 1.6 Span patches, atomic staging, unified diffs | Done | Apply every operation or none. Hash mismatch fails closed. Fuzzy match is diagnostic only. |
 | 1.7 Sandboxed compilation | Done | No network, no shell escape, staged files only, resource limits. Failed staging leaves the live project unchanged. |
 | 1.8 Repair (1), approval, versions, undo | Done | One repair for ordinary edits. Approval is bound to patch id + base revision + diff hash. Accepted edits are reversible. |
-| Phase 2 | Later | Fact ledger and multi-target merge. Invented facts are the worst failure. |
+| 2.1 Fact ledger | Done | Document facts bind to existing spans. Unsupported claims are not authorized. Invented facts are the worst failure. |
+| Phase 2 remainder | Later | Include graph, fan-out merge, PDF layout, evaluation CI, production checkpointer, concurrent edits. |
 | Phase 3 | Later | Auto-approval only under an explicit low-risk policy. |
 
 Phase 1 is one product milestone ([`specs.md`](./specs.md) §17.1) split into sequential plans. Each plan has to leave working, tested software. Phase 2 waits until Phase 1 slices are green.
@@ -56,8 +57,10 @@ Done:
 - 1.7 sandboxed compilation (`latexo.compile.compile_staging`)
 - 1.8 repair, approval, version records, undo (`latexo.review`)
 
-Phase 1 slices 1.1–1.8 are implemented. Next product work is Phase 2.
+Phase 1 slices 1.1–1.8 are implemented. Phase 2.1 fact ledger (`latexo.facts.build_fact_ledger`) is done.
+
+Next: remaining Phase 2 (include graph, multi-target merge, …).
 
 ## Later
 
-LangGraph wiring, LLM calls, the fact ledger, semantic ontology, fan-out merge, a TeX Live image, UI, and Git commits inside a user's existing repo.
+LangGraph wiring, LLM calls, semantic ontology, fan-out merge, a TeX Live image, UI, and Git commits inside a user's existing repo.

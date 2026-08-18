@@ -32,6 +32,8 @@ print(root.root_path, root.requires_clarification)
 
 `repair_candidate` allows one ordinary repair on staging and refuses a second. Missing facts ask; they do not invent. `issue_approval` / `commit_approved` bind approval to patch id, base revision, and diff hash. A live-file change after approval blocks commit. `undo_last` restores the recorded prior bytes and appends history.
 
+`build_fact_ledger` extracts employers, dates, and quantities from existing spans and records caller-supplied claims as `user_message` facts. Planning only allows ledger ids. A metric that is not in the document and not supplied still requires clarification.
+
 ## Status
 
 Phase 1 (safe single-target MVP) is implemented and tested.

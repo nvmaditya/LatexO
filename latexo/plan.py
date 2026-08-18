@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
+
+if TYPE_CHECKING:
+    from latexo.facts import FactLedger
 
 from pydantic import BaseModel, Field
 
@@ -75,11 +78,13 @@ def _claims(request: str) -> list[str]:
     return found
 
 
-def _covered(claim: str, document: str, facts: list[UserFact]) -> bool:
+def _covered(claim: str, document: str, facts: list[UserFact], ledger_texts: list[str]) -> bool:
     needle = claim.lower()
     if needle in document.lower():
         return True
-    return any(needle in fact.text.lower() for fact in facts)
+    if any(needle in fact.text.lower() for fact in facts):
+        return True
+    return any(needle in text.lower() for text in ledger_texts)
 
 
 def plan_edit(
@@ -90,7 +95,10 @@ def plan_edit(
     *,
     workspace_root: Path | None = None,
     user_facts: list[UserFact] | None = None,
+    ledger: FactLedger | None = None,
 ) -> PlanningResult:
+    from latexo.facts import FactLedger, build_fact_ledger
+
     facts = list(user_facts or [])
     known = {s.span_id for s in spans if s.revision_id == snapshot.revision_id}
     if location.requires_clarification or location.targeting_mode != "single":
@@ -99,12 +107,22 @@ def plan_edit(
     if len(targets) != 1:
         return PlanningResult(plan=None, requires_clarification=True)
 
+    if ledger is None and workspace_root is not None:
+        ledger = build_fact_ledger(snapshot, spans, workspace_root, user_facts=facts)
+    ledger_texts = []
+    if ledger is not None:
+        ledger_texts = [f.original_text for f in ledger.facts] + [
+            f.normalized_value for f in ledger.facts
+        ]
     document = _document_text(spans, workspace_root)
-    missing = [c for c in _claims(request) if not _covered(c, document, facts)]
+    missing = [c for c in _claims(request) if not _covered(c, document, facts, ledger_texts)]
     if missing:
         return PlanningResult(plan=None, requires_clarification=True)
 
-    allowed = [f.fact_id for f in facts if f.fact_id]
+    if ledger is not None:
+        allowed = [f.fact_id for f in ledger.facts if f.fact_id]
+    else:
+        allowed = [f.fact_id for f in facts if f.fact_id]
     span = next(s for s in spans if s.span_id == targets[0])
     change = PlannedChange(
         target_span_ids=targets,

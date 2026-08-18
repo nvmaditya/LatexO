@@ -1,3 +1,4 @@
+from latexo.facts import FactLedger, ResumeFact, build_fact_ledger
 from latexo.compile import ValidationReport, compile_staging
 from latexo.apply import (
     ApplyResult,
@@ -44,12 +45,14 @@ __all__ = [
     "CommitResult",
     "DeleteSpan",
     "EditPlan",
+    "FactLedger",
     "FileRecord",
     "InsertAtSpan",
     "PatchSet",
     "RepairResult",
     "RepairSession",
     "ReplaceSpan",
+    "ResumeFact",
     "LocatedTarget",
     "LocationResult",
     "PlannedChange",
@@ -63,6 +66,7 @@ __all__ = [
     "WorkspaceSnapshot",
     "UserFact",
     "apply_patchset",
+    "build_fact_ledger",
     "commit_approved",
     "compile_staging",
     "issue_approval",
