@@ -1,49 +1,57 @@
-# LatexO plan
+# Plan
 
-Project-specific phase map. Process: [skills-guide HOW_TO_WORK](https://github.com/nvmaditya/skills-guide/blob/main/HOW_TO_WORK.md). Binding spec: [`specs.md`](./specs.md). Language: [`CONTEXT.md`](./CONTEXT.md).
+How LatexO gets built. Binding spec: [`specs.md`](./specs.md). Language: [`CONTEXT.md`](./CONTEXT.md). Process: [skills-guide HOW_TO_WORK](https://github.com/nvmaditya/skills-guide/blob/main/HOW_TO_WORK.md).
 
 ```
 Think → Plan → Implement (small) → Verify → Review → Next
 ```
 
-## Binding constraints (from `specs.md`)
+## Constraints
+
+Copied from the spec, not restated as taste:
 
 - Single writer: models propose; deterministic code applies and commits.
 - Exactness over convenience: stale and ambiguous patches fail closed. No silent fuzzy writes.
-- Validation before mutation: live workspace unchanged until approval + validation.
+- Validation before mutation: the live workspace stays unchanged until approval and validation succeed.
 - Revision awareness: every span and patch belongs to a snapshot. Concurrent edits regenerate.
 - Factual provenance: new claims come from an existing source span or an explicit user message.
-- Bounded autonomy: patch size, file scope, repair attempts, compiler time, tool access have limits.
+- Bounded autonomy: patch size, file scope, repair attempts, compiler time, and tool access have limits.
 - Human approval is mandatory in version 1.
-- No unrestricted shell or filesystem writer for model nodes.
+- Model nodes do not get an unrestricted shell or filesystem writer.
 
-## Skill map
+## Phases
 
-| Phase / milestone | Primary skills | Hard rule to test |
+| Slice | Status | Hard rule |
 |---|---|---|
-| 1.1 Workspace snapshot + path safety | `writing-plans`, `test-driven-development`, **ponytail** | Paths that escape the workspace or resolve through unsafe symbolic links are rejected. Generated compiler artifacts are excluded from edit scope. Every file has SHA-256 and a revision-scoped snapshot. |
-| 1.2 Root resolution | `test-driven-development`, **ponytail** | Unique `\documentclass` + body wins; several plausible roots require clarification, not a guess. |
-| 1.3 Structural segmentation | `test-driven-development`, **ponytail** | Spans are parser-bounded. Models never author offsets or line numbers. `span_id` is valid only within its revision. |
-| 1.4 Active-selection-aware location | `test-driven-development`, **ponytail** | Selection/cursor first. Low confidence → interrupt. Patch generator cannot override location. |
-| 1.5 Structured planning | `test-driven-development`, **ponytail** | Plan names existing spans, allowed facts, invariants. Missing facts → clarification, not invention. |
-| 1.6 Span patches, atomic staging, unified diffs | `test-driven-development`, **ponytail** | Apply all operations or none. Hash mismatch fails closed. Fuzzy match is diagnostic only. |
-| 1.7 Sandboxed compilation | `test-driven-development`, **ponytail** | Compiler: no network, no shell escape, staged files only, resource limits. Failed staging leaves live project unchanged. |
-| 1.8 Repair (1), approval, version records, undo | `test-driven-development`, **ponytail** | One repair for ordinary edits. Approval bound to patch ID + base revision + diff hash. Every accepted edit is inspectable and reversible. |
-| Phase 2 | see `specs.md` §17.2 | Fact ledger + multi-target merge. Highest-severity failure: invented fact. |
-| Phase 3 | see `specs.md` §17.3 | Auto-approval only for explicit low-risk policy. |
+| 1.1 Workspace snapshot + path safety | Done | Escaping and unsafe symlink paths are rejected. Generated artifacts are out of edit scope. Every file has a SHA-256. |
+| 1.2 Root resolution | Done | Unique `\documentclass` + body wins. Several plausible roots require clarification. |
+| 1.3 Structural segmentation | Next | Spans are parser-bounded. Models never author offsets or line numbers. `span_id` is valid only in its revision. |
+| 1.4 Active-selection-aware location | Planned | Selection and cursor first. Low confidence interrupts. The patch generator cannot override location. |
+| 1.5 Structured planning | Planned | The plan names existing spans, allowed facts, and invariants. Missing facts ask; they do not invent. |
+| 1.6 Span patches, atomic staging, unified diffs | Planned | Apply every operation or none. Hash mismatch fails closed. Fuzzy match is diagnostic only. |
+| 1.7 Sandboxed compilation | Planned | No network, no shell escape, staged files only, resource limits. Failed staging leaves the live project unchanged. |
+| 1.8 Repair (1), approval, versions, undo | Planned | One repair for ordinary edits. Approval is bound to patch id + base revision + diff hash. Accepted edits are reversible. |
+| Phase 2 | Later | Fact ledger and multi-target merge. Invented facts are the worst failure. |
+| Phase 3 | Later | Auto-approval only under an explicit low-risk policy. |
 
-Phase 1 is one product milestone (`specs.md` §17.1) and several sequential plans. Each plan must produce working, testable software. Do not start Phase 2 until Phase 1 acceptance for that slice is green.
+Phase 1 is one product milestone ([`specs.md`](./specs.md) §17.1) split into sequential plans. Each plan has to leave working, tested software. Phase 2 waits until Phase 1 slices are green.
+
+## Skills per slice
+
+| Slice | Primary skills |
+|---|---|
+| 1.1–1.8 | `writing-plans`, `test-driven-development`, **ponytail** |
+| Phase 2–3 | same, plus domain tests for factuality |
 
 ## Current work
 
-**Done:**
-- 1.1 [`docs/superpowers/plans/2026-08-18-workspace-snapshot.md`](./docs/superpowers/plans/2026-08-18-workspace-snapshot.md)
-- 1.2 [`docs/superpowers/plans/2026-08-18-root-resolution.md`](./docs/superpowers/plans/2026-08-18-root-resolution.md)
+Done:
 
-**Next:** 1.3 structural segmentation (`SourceSpan` tree).
+- [1.1 workspace snapshot](./docs/superpowers/plans/2026-08-18-workspace-snapshot.md)
+- [1.2 root resolution](./docs/superpowers/plans/2026-08-18-root-resolution.md)
 
-**Slice 1.2 exit criterion:** unique `\documentclass`+body wins; multiple or zero roots require clarification; explicit/confirmed roots win; escaping paths raise `UnsafePathError`. Met.
+Next: 1.3 structural segmentation (`SourceSpan` tree).
 
-## Out of scope until later slices
+## Later
 
-LangGraph, LLM calls, fact ledger, semantic ontology, fan-out merge, TeX Live image, UI, Git-as-user-repo commits.
+LangGraph wiring, LLM calls, the fact ledger, semantic ontology, fan-out merge, a TeX Live image, UI, and Git commits inside a user's existing repo.
