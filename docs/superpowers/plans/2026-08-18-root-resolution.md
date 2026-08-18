@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** Complete on `feat/workspace-snapshot` (2026-08-18).
+
 **Goal:** Pick the compilation root from a snapshot using the spec order, and ask for clarification instead of guessing when more than one root is plausible.
 
 **Architecture:** `latexo.root.resolve_root` reads already-snapshotted `.tex` files through `resolve_in_workspace`. It does not compile. Include-graph ranking and compilation probes are out of scope (Phase 1.2 ceiling).

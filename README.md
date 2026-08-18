@@ -16,4 +16,4 @@ python -m pytest -v
 
 ## Current slice
 
-Phase 1.1: workspace snapshot, revision id, generated-artifact exclusion, path escape rejection.
+Phase 1.1–1.2 on `feat/workspace-snapshot`: snapshot, revision id, path safety, compilation-root resolution.

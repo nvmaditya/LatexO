@@ -34,6 +34,13 @@ def _scan_candidates(snapshot: WorkspaceSnapshot, workspace_root: Path) -> list[
     return found
 
 
+def _existing_override(workspace_root: Path, candidate: str) -> str | None:
+    path = resolve_in_workspace(workspace_root, candidate)
+    if not path.is_file():
+        return None
+    return path.relative_to(workspace_root.resolve()).as_posix()
+
+
 def resolve_root(
     snapshot: WorkspaceSnapshot,
     workspace_root: Path,
@@ -41,7 +48,22 @@ def resolve_root(
     explicit_root: str | None = None,
     confirmed_root: str | None = None,
 ) -> RootResolution:
-    del explicit_root, confirmed_root
+    # ponytail: skip active-file root declarations and include-graph ranking until those maps exist
+    for value, reason in (
+        (explicit_root, "explicitly selected"),
+        (confirmed_root, "previously confirmed"),
+    ):
+        if value is None:
+            continue
+        chosen = _existing_override(workspace_root, value)
+        if chosen is None:
+            continue
+        return RootResolution(
+            root_path=chosen,
+            candidates=[chosen],
+            requires_clarification=False,
+            reason=reason,
+        )
     candidates = _scan_candidates(snapshot, workspace_root)
     if len(candidates) == 1:
         return RootResolution(

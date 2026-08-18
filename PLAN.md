@@ -36,11 +36,13 @@ Phase 1 is one product milestone (`specs.md` §17.1) and several sequential plan
 
 ## Current work
 
-**Done:** [`docs/superpowers/plans/2026-08-18-workspace-snapshot.md`](./docs/superpowers/plans/2026-08-18-workspace-snapshot.md) — snapshot + revision id + generated exclusion + path policy.
+**Done:**
+- 1.1 [`docs/superpowers/plans/2026-08-18-workspace-snapshot.md`](./docs/superpowers/plans/2026-08-18-workspace-snapshot.md)
+- 1.2 [`docs/superpowers/plans/2026-08-18-root-resolution.md`](./docs/superpowers/plans/2026-08-18-root-resolution.md)
 
-**Next:** 1.2 root resolution (`docs/superpowers/plans/2026-08-18-root-resolution.md`).
+**Next:** 1.3 structural segmentation (`SourceSpan` tree).
 
-**Slice 1.1 exit criterion:** `pytest` proves snapshot + revision id + generated-file exclusion + unsafe-path rejection + editor context capture. Met.
+**Slice 1.2 exit criterion:** unique `\documentclass`+body wins; multiple or zero roots require clarification; explicit/confirmed roots win; escaping paths raise `UnsafePathError`. Met.
 
 ## Out of scope until later slices
 
