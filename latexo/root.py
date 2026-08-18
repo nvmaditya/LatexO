@@ -52,9 +52,7 @@ def _rank_by_includes(
     mapped = build_include_map(snapshot, workspace_root)
     if active_file:
         holders = [
-            c
-            for c in candidates
-            if c == active_file or reaches(mapped.edges, c, active_file)
+            c for c in candidates if reaches(mapped.edges, c, active_file)
         ]
         if len(holders) == 1:
             return holders[0]

@@ -116,3 +116,15 @@ def test_two_unrelated_compilable_files_still_need_clarification(tmp_path: Path)
     result = resolve_root(snap, tmp_path)
     assert result.requires_clarification is True
     assert result.root_path is None
+
+
+def test_active_file_alone_does_not_break_a_true_tie(tmp_path: Path) -> None:
+    (tmp_path / "a.tex").write_bytes(CHAP_ROOT)
+    (tmp_path / "b.tex").write_bytes(CHAP_ROOT)
+    snap = take_snapshot(tmp_path, active_file="a.tex")
+    result = resolve_root(snap, tmp_path)
+    assert result.requires_clarification is True
+    assert result.root_path is None
+    via_kwarg = resolve_root(snap, tmp_path, active_file="b.tex")
+    assert via_kwarg.requires_clarification is True
+    assert via_kwarg.root_path is None
