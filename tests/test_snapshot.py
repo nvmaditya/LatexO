@@ -24,3 +24,21 @@ def test_snapshot_lists_hashed_tex_files(tmp_path: Path) -> None:
     assert snap.selection is None
     assert snap.created_at.endswith("Z")
     assert len(snap.revision_id) == 64
+
+
+def test_snapshot_excludes_generated_and_ignored_dirs(tmp_path: Path) -> None:
+    (tmp_path / "resume.tex").write_bytes(b"% root\n")
+    (tmp_path / "resume.aux").write_bytes(b"aux\n")
+    (tmp_path / "resume.fdb_latexmk").write_bytes(b"fdb\n")
+    (tmp_path / ".git").mkdir()
+    (tmp_path / ".git" / "hidden.tex").write_bytes(b"% no\n")
+    minted = tmp_path / "_minted-resume"
+    minted.mkdir()
+    (minted / "frag.tex").write_bytes(b"% no\n")
+    build = tmp_path / "build"
+    build.mkdir()
+    (build / "out.tex").write_bytes(b"% no\n")
+
+    snap = take_snapshot(tmp_path)
+
+    assert [f.path for f in snap.files] == ["resume.tex"]

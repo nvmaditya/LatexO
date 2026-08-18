@@ -8,6 +8,25 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 SOURCE_SUFFIXES = {".tex", ".sty", ".cls", ".clo", ".bib", ".bst", ".ltx"}
+IGNORED_DIR_NAMES = {".git", "__pycache__", ".pytest_cache", "out", "build"}
+GENERATED_SUFFIXES = (
+    ".synctex.gz",
+    ".fdb_latexmk",
+    ".run.xml",
+    ".aux",
+    ".log",
+    ".out",
+    ".toc",
+    ".lof",
+    ".lot",
+    ".fls",
+    ".bbl",
+    ".blg",
+    ".nav",
+    ".snm",
+    ".vrb",
+    ".bcf",
+)
 
 
 class FileRecord(BaseModel):
@@ -47,6 +66,15 @@ def _revision_id(files: list[FileRecord]) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def _is_generated_name(name: str) -> bool:
+    lower = name.lower()
+    return any(lower.endswith(suffix) for suffix in GENERATED_SUFFIXES)
+
+
+def _should_ignore_dir(name: str) -> bool:
+    return name in IGNORED_DIR_NAMES or name.startswith("_minted")
+
+
 def take_snapshot(
     workspace_root: Path,
     *,
@@ -55,12 +83,17 @@ def take_snapshot(
 ) -> WorkspaceSnapshot:
     root = workspace_root.resolve()
     records: list[FileRecord] = []
-    for path in sorted(root.rglob("*")):
-        if not path.is_file():
-            continue
-        if path.suffix.lower() not in SOURCE_SUFFIXES:
-            continue
-        records.append(_file_record(root, path))
+    for dirpath, dirnames, filenames in root.walk(follow_symlinks=False):
+        dirnames[:] = [d for d in dirnames if not _should_ignore_dir(d)]
+        for name in filenames:
+            if _is_generated_name(name):
+                continue
+            path = dirpath / name
+            if not path.is_file():
+                continue
+            if path.suffix.lower() not in SOURCE_SUFFIXES:
+                continue
+            records.append(_file_record(root, path))
     records.sort(key=lambda f: f.path)
     return WorkspaceSnapshot(
         revision_id=_revision_id(records),
