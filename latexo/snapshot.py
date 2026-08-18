@@ -1,0 +1,71 @@
+from __future__ import annotations
+
+import hashlib
+import mimetypes
+from datetime import datetime, timezone
+from pathlib import Path
+
+from pydantic import BaseModel, Field
+
+SOURCE_SUFFIXES = {".tex", ".sty", ".cls", ".clo", ".bib", ".bst", ".ltx"}
+
+
+class FileRecord(BaseModel):
+    path: str
+    sha256: str
+    size_bytes: int
+    media_type: str
+    is_generated: bool
+
+
+class WorkspaceSnapshot(BaseModel):
+    revision_id: str
+    files: list[FileRecord]
+    active_file: str | None = None
+    selection: dict | None = None
+    created_at: str = Field(min_length=1)
+
+
+def _posix_rel(root: Path, path: Path) -> str:
+    return path.relative_to(root).as_posix()
+
+
+def _file_record(root: Path, path: Path) -> FileRecord:
+    data = path.read_bytes()
+    media, _ = mimetypes.guess_type(path.name)
+    return FileRecord(
+        path=_posix_rel(root, path),
+        sha256=hashlib.sha256(data).hexdigest(),
+        size_bytes=len(data),
+        media_type=media or "text/plain",
+        is_generated=False,
+    )
+
+
+def _revision_id(files: list[FileRecord]) -> str:
+    payload = "".join(f"{f.path}\t{f.sha256}\n" for f in files)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def take_snapshot(
+    workspace_root: Path,
+    *,
+    active_file: str | None = None,
+    selection: dict | None = None,
+) -> WorkspaceSnapshot:
+    root = workspace_root.resolve()
+    records: list[FileRecord] = []
+    for path in sorted(root.rglob("*")):
+        if not path.is_file():
+            continue
+        if path.suffix.lower() not in SOURCE_SUFFIXES:
+            continue
+        records.append(_file_record(root, path))
+    records.sort(key=lambda f: f.path)
+    return WorkspaceSnapshot(
+        revision_id=_revision_id(records),
+        files=records,
+        active_file=active_file,
+        selection=selection,
+        created_at=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    )
