@@ -8,7 +8,7 @@ Controlled LaTeX resume patch editor. Models propose typed patches; deterministi
 
 ## Setup
 
-Python 3.11+. `pydantic>=2` and `pytest>=8`.
+Python 3.12+. `pydantic>=2` and `pytest>=8`.
 
 ```
 python -m pytest -v

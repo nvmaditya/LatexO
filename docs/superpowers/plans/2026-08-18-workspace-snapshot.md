@@ -8,7 +8,7 @@
 
 **Architecture:** One deep module `latexo.snapshot`. Callers use `take_snapshot(workspace_root, *, active_file=None, selection=None) -> WorkspaceSnapshot`. Enumeration, hashing, generated-artifact exclusion, and path policy stay inside the module. Paths stored in the snapshot are POSIX-relative to the workspace root.
 
-**Tech Stack:** Python 3.11+, Pydantic v2, pytest, stdlib `hashlib` / `pathlib` / `mimetypes`. No LangGraph, no compiler, no LLM.
+**Tech Stack:** Python 3.12+, Pydantic v2, pytest, stdlib `hashlib` / `pathlib` / `mimetypes`. No LangGraph, no compiler, no LLM.
 
 ## Global Constraints
 
@@ -111,7 +111,7 @@ Create `pyproject.toml`:
 name = "latexo"
 version = "0.1.0"
 description = "LaTeX resume patch editor"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = ["pydantic>=2.0"]
 
 [project.optional-dependencies]
@@ -380,7 +380,7 @@ def take_snapshot(
     )
 ```
 
-Note: `Path.walk` exists in Python 3.12+. This repo runs 3.11+; if `Path.walk` is missing, use `os.walk(root, followlinks=False)` with the same `dirnames[:]` filter.
+Note: `Path.walk` requires Python 3.12, which is the package floor.
 
 - [ ] **Step 4: Run test to verify it passes**
 

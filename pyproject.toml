@@ -2,7 +2,7 @@
 name = "latexo"
 version = "0.1.0"
 description = "LaTeX resume patch editor"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = ["pydantic>=2.0"]
 
 [project.optional-dependencies]
