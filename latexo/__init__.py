@@ -1,3 +1,11 @@
+from latexo.apply import (
+    ApplyResult,
+    DeleteSpan,
+    InsertAtSpan,
+    PatchSet,
+    ReplaceSpan,
+    apply_patchset,
+)
 from latexo.locate import LocatedTarget, LocationResult, locate_targets
 from latexo.plan import (
     EditPlan,
@@ -17,8 +25,13 @@ from latexo.snapshot import (
 )
 
 __all__ = [
+    "ApplyResult",
+    "DeleteSpan",
     "EditPlan",
     "FileRecord",
+    "InsertAtSpan",
+    "PatchSet",
+    "ReplaceSpan",
     "LocatedTarget",
     "LocationResult",
     "PlannedChange",
@@ -28,6 +41,7 @@ __all__ = [
     "UnsafePathError",
     "WorkspaceSnapshot",
     "UserFact",
+    "apply_patchset",
     "locate_targets",
     "plan_edit",
     "resolve_in_workspace",

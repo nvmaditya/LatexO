@@ -26,9 +26,11 @@ print(root.root_path, root.requires_clarification)
 
 `plan_edit` turns a unique location plus a request into a typed plan: existing span ids, replace/insert/delete, expected paths, invariants, and required approval. A new metric or employer that is not in the document and not supplied as a user fact causes an ask instead of an invented fact id.
 
+`apply_patchset` checks each operation's span hash, rejects overlap and stale revisions, then writes every change into a staging directory or writes none. The live workspace is not modified. The unified diff is live versus staged.
+
 ## Status
 
-Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.5 are implemented and tested.
+Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.6 are implemented and tested.
 
 | Slice | What it does |
 |---|---|
@@ -37,7 +39,8 @@ Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.5 are implemente
 | 1.3 Spans | Deterministic `SourceSpan` tree: preamble, envs, sections, items, paragraphs, macros |
 | 1.4 Location | Selection/cursor first, then unique heading or quote; ties ask instead of guessing |
 | 1.5 Planning | Unique target plus rewrite/delete becomes an approved plan; missing facts ask |
-| 1.6–1.8 | Atomic patches, sandboxed compile, approval, undo |
+| 1.6 Apply | Hash-checked ops go to isolated staging plus a unified diff; live files stay put |
+| 1.7–1.8 | Sandboxed compile, approval, undo |
 
 The highest-severity failure in later slices is a polished, compiling resume that added a fact nobody supplied.
 
