@@ -25,7 +25,7 @@ Copied from the spec, not restated as taste:
 |---|---|---|
 | 1.1 Workspace snapshot + path safety | Done | Escaping and unsafe symlink paths are rejected. Generated artifacts are out of edit scope. Every file has a SHA-256. |
 | 1.2 Root resolution | Done | Unique `\documentclass` + body wins. Several plausible roots require clarification. |
-| 1.3 Structural segmentation | Next | Spans are parser-bounded. Models never author offsets or line numbers. `span_id` is valid only in its revision. |
+| 1.3 Structural segmentation | Done | Spans are parser-bounded. Models never author offsets or line numbers. `span_id` is valid only in its revision. |
 | 1.4 Active-selection-aware location | Planned | Selection and cursor first. Low confidence interrupts. The patch generator cannot override location. |
 | 1.5 Structured planning | Planned | The plan names existing spans, allowed facts, and invariants. Missing facts ask; they do not invent. |
 | 1.6 Span patches, atomic staging, unified diffs | Planned | Apply every operation or none. Hash mismatch fails closed. Fuzzy match is diagnostic only. |
@@ -49,8 +49,9 @@ Done:
 
 - [1.1 workspace snapshot](./docs/superpowers/plans/2026-08-18-workspace-snapshot.md)
 - [1.2 root resolution](./docs/superpowers/plans/2026-08-18-root-resolution.md)
+- 1.3 structural segmentation (`latexo.segment.segment_source`)
 
-Next: 1.3 structural segmentation (`SourceSpan` tree).
+Next: 1.4 active-selection-aware location.
 
 ## Later
 

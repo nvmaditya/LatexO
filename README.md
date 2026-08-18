@@ -20,15 +20,18 @@ print(root.root_path, root.requires_clarification)
 
 `resolve_root` picks the compilation root. A unique `\documentclass` plus `\begin{document}` wins. Several plausible roots require clarification instead of a guess.
 
+`segment_source` walks the snapshotted `.tex` bytes and returns revision-bound spans. Bounds come from the parser. Identifiers are hashes, not line numbers. Unclosed environments and unbalanced braces do not emit a span that pretends they were closed.
+
 ## Status
 
-Phase 1 (safe single-target MVP) is in progress. Slices 1.1 and 1.2 are implemented and tested.
+Phase 1 (safe single-target MVP) is in progress. Slices 1.1–1.3 are implemented and tested.
 
 | Slice | What it does |
 |---|---|
 | 1.1 Snapshot | Revision-scoped file inventory, SHA-256, editor context, path safety |
 | 1.2 Root | Explicit / confirmed / unique document root, or ask |
-| 1.3–1.8 | Spans, location, plans, atomic patches, sandboxed compile, approval, undo |
+| 1.3 Spans | Deterministic `SourceSpan` tree: preamble, envs, sections, items, paragraphs, macros |
+| 1.4–1.8 | Location, plans, atomic patches, sandboxed compile, approval, undo |
 
 The highest-severity failure in later slices is a polished, compiling resume that added a fact nobody supplied.
 
