@@ -36,6 +36,8 @@ print(root.root_path, root.requires_clarification)
 
 `build_include_map` records `\input`/`\include` edges between snapshot files. Comments do not count. Paths that escape the workspace are not in-workspace edges. A missing relative target is unresolved. `resolve_root` uses that graph when more than one `\documentclass`+body exists.
 
+`merge_proposals` reduces same-revision typed operations into one `PatchSet`. Overlap, nesting, and duplicates are rejected. The merged candidate is what `apply_patchset` runs atomically.
+
 ## Status
 
 Phase 1 (safe single-target MVP) is implemented and tested.

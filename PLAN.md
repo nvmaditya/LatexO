@@ -33,7 +33,8 @@ Copied from the spec, not restated as taste:
 | 1.8 Repair (1), approval, versions, undo | Done | One repair for ordinary edits. Approval is bound to patch id + base revision + diff hash. Accepted edits are reversible. |
 | 2.1 Fact ledger | Done | Document facts bind to existing spans. Unsupported claims are not authorized. Invented facts are the worst failure. |
 | 2.2 Include graph | Done | `\input`/`\include` edges stay in-workspace. Escapes are dropped. Missing targets are unresolved. Include ranking breaks a unique includer; true ties still ask. |
-| Phase 2 remainder | Later | Fan-out merge, section operations, PDF layout, evaluation CI, production checkpointer, concurrent edits. |
+| 2.3 Deterministic merge | Done | Two non-overlapping proposals become one atomic candidate. Duplicates, nests, overlaps, and stale hashes fail closed. |
+| Phase 2 remainder | Later | Section operations, PDF layout, evaluation CI, production checkpointer, concurrent edits. |
 | Phase 3 | Later | Auto-approval only under an explicit low-risk policy. |
 
 Phase 1 is one product milestone ([`specs.md`](./specs.md) §17.1) split into sequential plans. Each plan has to leave working, tested software. Phase 2 waits until Phase 1 slices are green.
@@ -58,9 +59,9 @@ Done:
 - 1.7 sandboxed compilation (`latexo.compile.compile_staging`)
 - 1.8 repair, approval, version records, undo (`latexo.review`)
 
-Phase 1 slices 1.1–1.8 are implemented. Phase 2.1 fact ledger and 2.2 include graph are done.
+Phase 1 slices 1.1–1.8 are implemented. Phase 2.1–2.3 (fact ledger, include graph, deterministic merge) are done.
 
-Next: remaining Phase 2 (fan-out merge, section operations, …).
+Next: remaining Phase 2 (section operations, PDF layout, …).
 
 ## Later
 

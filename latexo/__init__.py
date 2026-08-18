@@ -1,5 +1,6 @@
 from latexo.facts import FactLedger, ResumeFact, build_fact_ledger
 from latexo.includes import IncludeEdge, IncludeMap, build_include_map
+from latexo.merge import MergeResult, merge_proposals
 from latexo.compile import ValidationReport, compile_staging
 from latexo.apply import (
     ApplyResult,
@@ -58,6 +59,7 @@ __all__ = [
     "ResumeFact",
     "LocatedTarget",
     "LocationResult",
+    "MergeResult",
     "PlannedChange",
     "PlanningResult",
     "RootResolution",
@@ -76,6 +78,7 @@ __all__ = [
     "issue_approval",
     "load_records",
     "locate_targets",
+    "merge_proposals",
     "plan_edit",
     "repair_candidate",
     "resolve_in_workspace",
