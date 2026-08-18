@@ -84,6 +84,10 @@ def apply_patchset(
 ) -> ApplyResult:
     if patch.base_revision != snapshot.revision_id:
         return _fail("base revision does not match snapshot")
+    for record in snapshot.files:
+        live_path = resolve_in_workspace(workspace_root, record.path)
+        if hashlib.sha256(live_path.read_bytes()).hexdigest() != record.sha256:
+            return _fail("workspace changed since snapshot")
 
     by_id = {s.span_id: s for s in spans if s.revision_id == snapshot.revision_id}
     resolved: list[tuple[ReplaceSpan | InsertAtSpan | DeleteSpan, SourceSpan]] = []

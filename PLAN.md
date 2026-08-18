@@ -34,7 +34,11 @@ Copied from the spec, not restated as taste:
 | 2.1 Fact ledger | Done | Document facts bind to existing spans. Unsupported claims are not authorized. Invented facts are the worst failure. |
 | 2.2 Include graph | Done | `\input`/`\include` edges stay in-workspace. Escapes are dropped. Missing targets are unresolved. Include ranking breaks a unique includer; true ties still ask. |
 | 2.3 Deterministic merge | Done | Two non-overlapping proposals become one atomic candidate. Duplicates, nests, overlaps, and stale hashes fail closed. |
-| Phase 2 remainder | Later | Section operations, PDF layout, evaluation CI, production checkpointer, concurrent edits. |
+| 2.4 Section operations | Done | Whole-section replace/delete/reorder apply atomically to staging. Overlap fails closed. |
+| 2.5 Ontology labels and macros | Done | Deterministic experience/education labels on existing spans. Macro definitions retrieved from snapshot spans. |
+| 2.6 Concurrent/stale revision | Done | Apply/commit against a previous revision fail closed after live bytes change. |
+| 2.7 Checkpointer | Done | SQLite store writes revision + patch id transactionally and reloads in a new process. |
+| 2.8 Layout + eval CI | Done | Compile report exposes page-count fields. CI runs pytest plus a multi-file/custom-macro eval case. |
 | Phase 3 | Later | Auto-approval only under an explicit low-risk policy. |
 
 Phase 1 is one product milestone ([`specs.md`](./specs.md) §17.1) split into sequential plans. Each plan has to leave working, tested software. Phase 2 waits until Phase 1 slices are green.
@@ -59,10 +63,10 @@ Done:
 - 1.7 sandboxed compilation (`latexo.compile.compile_staging`)
 - 1.8 repair, approval, version records, undo (`latexo.review`)
 
-Phase 1 slices 1.1–1.8 are implemented. Phase 2.1–2.3 (fact ledger, include graph, deterministic merge) are done.
+Phase 1 slices 1.1–1.8 and Phase 2 slices 2.1–2.8 are implemented.
 
-Next: remaining Phase 2 (section operations, PDF layout, …).
+Next: Phase 3 (controlled automation) when needed.
 
 ## Later
 
-LangGraph wiring, LLM calls, semantic ontology, fan-out merge, a TeX Live image, UI, and Git commits inside a user's existing repo.
+LangGraph wiring, LLM calls, a TeX Live image, UI, and Git commits inside a user's existing repo.

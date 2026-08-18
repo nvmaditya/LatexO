@@ -1,6 +1,9 @@
+from latexo.checkpoint import load_checkpoint, save_checkpoints
 from latexo.facts import FactLedger, ResumeFact, build_fact_ledger
 from latexo.includes import IncludeEdge, IncludeMap, build_include_map
 from latexo.merge import MergeResult, merge_proposals
+from latexo.ontology import label_spans, lookup_macros
+from latexo.section import SectionEdit, apply_sections
 from latexo.compile import ValidationReport, compile_staging
 from latexo.apply import (
     ApplyResult,
@@ -70,17 +73,23 @@ __all__ = [
     "VersionRecord",
     "WorkspaceSnapshot",
     "UserFact",
+    "SectionEdit",
     "apply_patchset",
+    "apply_sections",
     "build_fact_ledger",
     "build_include_map",
     "commit_approved",
     "compile_staging",
     "issue_approval",
+    "label_spans",
+    "load_checkpoint",
     "load_records",
+    "lookup_macros",
     "locate_targets",
     "merge_proposals",
     "plan_edit",
     "repair_candidate",
+    "save_checkpoints",
     "resolve_in_workspace",
     "resolve_root",
     "segment_source",

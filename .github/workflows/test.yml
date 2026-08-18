@@ -17,3 +17,5 @@ jobs:
         run: pip install pydantic pytest
       - name: Test
         run: python -m pytest -q
+      - name: Eval corpus
+        run: python -m pytest tests/test_eval.py tests/test_includes.py tests/test_ontology.py -q

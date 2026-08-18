@@ -79,9 +79,16 @@ def compile_staging(
     if not ok:
         text = (proc.stderr or proc.stdout or "compile failed").strip()
         diagnostics.append({"message": text, "exit_code": proc.returncode})
+    before = env.get("LATEXO_PAGE_COUNT_BEFORE")
+    after = env.get("LATEXO_PAGE_COUNT_AFTER")
     return ValidationReport(
         compile_succeeded=ok,
         compiler_diagnostics=diagnostics,
         compile_root=str(root),
         latex_structure_valid=ok,
+        page_count_before=int(before) if before not in (None, "") else None,
+        page_count_after=int(after) if after not in (None, "") else None,
+        layout_warnings=[]
+        if before is None and after is None
+        else [{"page_count_before": before, "page_count_after": after}],
     )
