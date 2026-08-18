@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** Complete on `feat/workspace-snapshot` (2026-08-18). Symlink-escape test skips when the host cannot create symlinks.
+
 **Goal:** Take a revision-scoped snapshot of a LaTeX workspace: editable source files with SHA-256 hashes, a deterministic revision id, editor context, and fail-closed path safety.
 
 **Architecture:** One deep module `latexo.snapshot`. Callers use `take_snapshot(workspace_root, *, active_file=None, selection=None) -> WorkspaceSnapshot`. Enumeration, hashing, generated-artifact exclusion, and path policy stay inside the module. Paths stored in the snapshot are POSIX-relative to the workspace root.

@@ -36,9 +36,11 @@ Phase 1 is one product milestone (`specs.md` §17.1) and several sequential plan
 
 ## Current work
 
-**Active plan:** [`docs/superpowers/plans/2026-08-18-workspace-snapshot.md`](./docs/superpowers/plans/2026-08-18-workspace-snapshot.md)
+**Done:** [`docs/superpowers/plans/2026-08-18-workspace-snapshot.md`](./docs/superpowers/plans/2026-08-18-workspace-snapshot.md) — snapshot + revision id + generated exclusion + path policy.
 
-**Slice 1.1 exit criterion:** `pytest` proves snapshot + revision id + generated-file exclusion + unsafe-path rejection + editor context capture.
+**Next:** 1.2 root resolution (`docs/superpowers/plans/2026-08-18-root-resolution.md`).
+
+**Slice 1.1 exit criterion:** `pytest` proves snapshot + revision id + generated-file exclusion + unsafe-path rejection + editor context capture. Met.
 
 ## Out of scope until later slices
 

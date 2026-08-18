@@ -29,6 +29,10 @@ GENERATED_SUFFIXES = (
 )
 
 
+class UnsafePathError(ValueError):
+    pass
+
+
 class FileRecord(BaseModel):
     path: str
     sha256: str
@@ -47,6 +51,18 @@ class WorkspaceSnapshot(BaseModel):
 
 def _posix_rel(root: Path, path: Path) -> str:
     return path.relative_to(root).as_posix()
+
+
+def resolve_in_workspace(workspace_root: Path, candidate: str | Path) -> Path:
+    root = workspace_root.resolve()
+    raw = Path(candidate)
+    probe = raw if raw.is_absolute() else root / raw
+    resolved = probe.resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as exc:
+        raise UnsafePathError(f"path escapes workspace: {candidate}") from exc
+    return resolved
 
 
 def _file_record(root: Path, path: Path) -> FileRecord:
@@ -82,13 +98,24 @@ def take_snapshot(
     selection: dict | None = None,
 ) -> WorkspaceSnapshot:
     root = workspace_root.resolve()
+    if not root.is_dir():
+        raise UnsafePathError(f"workspace is not a directory: {workspace_root}")
+    stored_active: str | None = None
+    if active_file is not None:
+        stored_active = resolve_in_workspace(root, active_file).relative_to(root).as_posix()
     records: list[FileRecord] = []
     for dirpath, dirnames, filenames in root.walk(follow_symlinks=False):
+        for dirname in dirnames:
+            child = dirpath / dirname
+            if child.is_symlink():
+                resolve_in_workspace(root, child)
         dirnames[:] = [d for d in dirnames if not _should_ignore_dir(d)]
         for name in filenames:
+            path = dirpath / name
+            if path.is_symlink():
+                resolve_in_workspace(root, path)
             if _is_generated_name(name):
                 continue
-            path = dirpath / name
             if not path.is_file():
                 continue
             if path.suffix.lower() not in SOURCE_SUFFIXES:
@@ -98,7 +125,7 @@ def take_snapshot(
     return WorkspaceSnapshot(
         revision_id=_revision_id(records),
         files=records,
-        active_file=active_file,
+        active_file=stored_active,
         selection=selection,
         created_at=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     )

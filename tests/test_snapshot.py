@@ -1,7 +1,9 @@
 import hashlib
 from pathlib import Path
 
-from latexo.snapshot import take_snapshot
+import pytest
+
+from latexo.snapshot import UnsafePathError, resolve_in_workspace, take_snapshot
 
 
 def test_snapshot_lists_hashed_tex_files(tmp_path: Path) -> None:
@@ -42,3 +44,57 @@ def test_snapshot_excludes_generated_and_ignored_dirs(tmp_path: Path) -> None:
     snap = take_snapshot(tmp_path)
 
     assert [f.path for f in snap.files] == ["resume.tex"]
+
+
+def test_revision_id_is_stable_across_copies(tmp_path: Path) -> None:
+    a = tmp_path / "a"
+    b = tmp_path / "b"
+    for root in (a, b):
+        root.mkdir()
+        (root / "cv.tex").write_bytes(b"same\n")
+    assert take_snapshot(a).revision_id == take_snapshot(b).revision_id
+
+
+def test_resolve_rejects_path_escape(tmp_path: Path) -> None:
+    workspace = tmp_path / "ws"
+    workspace.mkdir()
+    (tmp_path / "outside.tex").write_bytes(b"x\n")
+    with pytest.raises(UnsafePathError):
+        resolve_in_workspace(workspace, tmp_path / "outside.tex")
+    with pytest.raises(UnsafePathError):
+        resolve_in_workspace(workspace, "../outside.tex")
+
+
+def test_snapshot_rejects_symlink_escape(tmp_path: Path) -> None:
+    workspace = tmp_path / "ws"
+    workspace.mkdir()
+    (workspace / "ok.tex").write_bytes(b"ok\n")
+    outside = tmp_path / "secret.tex"
+    outside.write_bytes(b"secret\n")
+    link = workspace / "leak.tex"
+    try:
+        link.symlink_to(outside)
+    except OSError:
+        pytest.skip("symlinks not available")
+    with pytest.raises(UnsafePathError):
+        take_snapshot(workspace)
+
+
+def test_snapshot_records_active_file_and_selection(tmp_path: Path) -> None:
+    (tmp_path / "resume.tex").write_bytes(b"body\n")
+    selection = {"start_byte": 0, "end_byte": 4}
+    snap = take_snapshot(
+        tmp_path,
+        active_file="resume.tex",
+        selection=selection,
+    )
+    assert snap.active_file == "resume.tex"
+    assert snap.selection == selection
+
+
+def test_snapshot_rejects_active_file_outside_workspace(tmp_path: Path) -> None:
+    workspace = tmp_path / "ws"
+    workspace.mkdir()
+    (workspace / "resume.tex").write_bytes(b"body\n")
+    with pytest.raises(UnsafePathError):
+        take_snapshot(workspace, active_file="../nope.tex")

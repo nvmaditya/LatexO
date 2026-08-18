@@ -1,3 +1,15 @@
-from latexo.snapshot import FileRecord, WorkspaceSnapshot, take_snapshot
+from latexo.snapshot import (
+    FileRecord,
+    UnsafePathError,
+    WorkspaceSnapshot,
+    resolve_in_workspace,
+    take_snapshot,
+)
 
-__all__ = ["FileRecord", "WorkspaceSnapshot", "take_snapshot"]
+__all__ = [
+    "FileRecord",
+    "UnsafePathError",
+    "WorkspaceSnapshot",
+    "resolve_in_workspace",
+    "take_snapshot",
+]
