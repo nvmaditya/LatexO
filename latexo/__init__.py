@@ -1,3 +1,4 @@
+from latexo.root import RootResolution, resolve_root
 from latexo.snapshot import (
     FileRecord,
     UnsafePathError,
@@ -8,8 +9,10 @@ from latexo.snapshot import (
 
 __all__ = [
     "FileRecord",
+    "RootResolution",
     "UnsafePathError",
     "WorkspaceSnapshot",
     "resolve_in_workspace",
+    "resolve_root",
     "take_snapshot",
 ]
