@@ -39,7 +39,8 @@ Copied from the spec, not restated as taste:
 | 2.6 Concurrent/stale revision | Done | Apply/commit against a previous revision fail closed after live bytes change. |
 | 2.7 Checkpointer | Done | SQLite store writes revision + patch id transactionally and reloads in a new process. |
 | 2.8 Layout + eval CI | Done | Compile report exposes page-count fields. CI runs pytest plus a multi-file/custom-macro eval case. |
-| Phase 3 | Later | Auto-approval only under an explicit low-risk policy. |
+| 3.1 Low-risk auto-approval | Done | Explicit policy may issue a bound approval for local rewrites with no new facts. High-risk or no policy still requires a human. CAS still holds. |
+| Phase 3 remainder | Later | Style annotations, preamble/style edits under stricter review, visual regression, telemetry, independent critic. |
 
 Phase 1 is one product milestone ([`specs.md`](./specs.md) §17.1) split into sequential plans. Each plan has to leave working, tested software. Phase 2 waits until Phase 1 slices are green.
 
@@ -63,9 +64,9 @@ Done:
 - 1.7 sandboxed compilation (`latexo.compile.compile_staging`)
 - 1.8 repair, approval, version records, undo (`latexo.review`)
 
-Phase 1 slices 1.1–1.8 and Phase 2 slices 2.1–2.8 are implemented.
+Phase 1 slices 1.1–1.8, Phase 2 slices 2.1–2.8, and Phase 3.1 low-risk auto-approval are implemented.
 
-Next: Phase 3 (controlled automation) when needed.
+Next: remaining Phase 3 (style annotations, visual regression, telemetry, critic).
 
 ## Later
 

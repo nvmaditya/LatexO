@@ -38,7 +38,9 @@ print(root.root_path, root.requires_clarification)
 
 `merge_proposals` reduces same-revision typed operations into one `PatchSet`. Overlap, nesting, and duplicates are rejected. The merged candidate is what `apply_patchset` runs atomically.
 
-`apply_sections` replaces, deletes, or reorders parser-bounded section spans. `label_spans` / `lookup_macros` assign experience/education labels and return `\newcommand` text from existing spans. `save_checkpoints` / `load_checkpoint` persist a thread's revision and patch id in SQLite. Compile reports can carry page counts from `LATEXO_PAGE_COUNT_*`. Apply fails if any snapshotted file hash no longer matches the live workspace.
+`apply_sections` replaces, deletes, or reorders parser-bounded section spans. `label_spans` / `lookup_macros` assign experience/education labels and return `\newcommand` text from existing spans. `save_checkpoints` / `load_checkpoint` persist a thread's revision and patch id in SQLite. Compile reports can carry page counts from compiler stdout. Apply fails if any snapshotted file hash no longer matches the live workspace.
+
+`auto_approve` issues a bound approval only when an explicit `AutoApprovePolicy(enabled=True)` accepts a low-risk local rewrite. New facts, preamble/class/style edits, or a missing policy do not auto-approve. Commit still uses the existing CAS.
 
 ## Status
 

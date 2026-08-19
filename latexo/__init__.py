@@ -3,6 +3,7 @@ from latexo.facts import FactLedger, ResumeFact, build_fact_ledger
 from latexo.includes import IncludeEdge, IncludeMap, build_include_map
 from latexo.merge import MergeResult, merge_proposals
 from latexo.ontology import label_spans, lookup_macros
+from latexo.policy import AutoApprovePolicy, AutoApproveResult, auto_approve
 from latexo.section import SectionEdit, apply_sections
 from latexo.compile import ValidationReport, compile_staging
 from latexo.apply import (
@@ -47,6 +48,8 @@ from latexo.snapshot import (
 __all__ = [
     "Approval",
     "ApplyResult",
+    "AutoApprovePolicy",
+    "AutoApproveResult",
     "CommitResult",
     "DeleteSpan",
     "EditPlan",
@@ -76,6 +79,7 @@ __all__ = [
     "SectionEdit",
     "apply_patchset",
     "apply_sections",
+    "auto_approve",
     "build_fact_ledger",
     "build_include_map",
     "commit_approved",
