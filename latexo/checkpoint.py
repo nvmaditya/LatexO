@@ -8,6 +8,7 @@ from pathlib import Path
 def _connect(store: Path) -> sqlite3.Connection:
     store.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(store)
+    conn.isolation_level = None
     conn.execute(
         """
         CREATE TABLE IF NOT EXISTS checkpoints (
@@ -24,7 +25,7 @@ def _connect(store: Path) -> sqlite3.Connection:
 def save_checkpoints(store: Path, records: list[dict]) -> None:
     conn = _connect(store)
     try:
-        conn.execute("BEGIN")
+        conn.execute("BEGIN IMMEDIATE")
         for record in records:
             thread_id = record.get("thread_id")
             revision_id = record.get("revision_id")
@@ -43,9 +44,9 @@ def save_checkpoints(store: Path, records: list[dict]) -> None:
                 """,
                 (thread_id, revision_id, patch_id, payload),
             )
-        conn.commit()
+        conn.execute("COMMIT")
     except Exception:
-        conn.rollback()
+        conn.execute("ROLLBACK")
         raise
     finally:
         conn.close()

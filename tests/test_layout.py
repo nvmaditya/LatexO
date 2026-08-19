@@ -4,8 +4,7 @@ from pathlib import Path
 from latexo.compile import compile_staging
 
 RECORDER = """\
-import os
-import sys
+print("LATEXO_PAGES before=2 after=1")
 raise SystemExit(0)
 """
 
@@ -25,10 +24,6 @@ def test_compile_report_exposes_page_counts(tmp_path: Path) -> None:
         live_root=live,
         root_file="resume.tex",
         compiler=[sys.executable, str(recorder)],
-        extra_env={
-            "LATEXO_PAGE_COUNT_BEFORE": "2",
-            "LATEXO_PAGE_COUNT_AFTER": "1",
-        },
     )
     assert report.compile_succeeded is True
     assert report.page_count_before == 2

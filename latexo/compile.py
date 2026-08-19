@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from pathlib import Path
 
 from pydantic import BaseModel, Field
 
 from latexo.snapshot import UnsafePathError
+
+_PAGES = re.compile(
+    r"LATEXO_PAGES\s+before=(None|\d+)\s+after=(None|\d+)",
+    re.IGNORECASE,
+)
 
 
 class ValidationReport(BaseModel):
@@ -79,16 +85,21 @@ def compile_staging(
     if not ok:
         text = (proc.stderr or proc.stdout or "compile failed").strip()
         diagnostics.append({"message": text, "exit_code": proc.returncode})
-    before = env.get("LATEXO_PAGE_COUNT_BEFORE")
-    after = env.get("LATEXO_PAGE_COUNT_AFTER")
+    combined = f"{proc.stdout or ''}\n{proc.stderr or ''}"
+    match = _PAGES.search(combined)
+    before = after = None
+    if match:
+        before = None if match.group(1).lower() == "none" else int(match.group(1))
+        after = None if match.group(2).lower() == "none" else int(match.group(2))
+    warnings: list[dict] = []
+    if before is not None or after is not None:
+        warnings.append({"page_count_before": before, "page_count_after": after})
     return ValidationReport(
         compile_succeeded=ok,
         compiler_diagnostics=diagnostics,
         compile_root=str(root),
         latex_structure_valid=ok,
-        page_count_before=int(before) if before not in (None, "") else None,
-        page_count_after=int(after) if after not in (None, "") else None,
-        layout_warnings=[]
-        if before is None and after is None
-        else [{"page_count_before": before, "page_count_after": after}],
+        page_count_before=before,
+        page_count_after=after,
+        layout_warnings=warnings,
     )

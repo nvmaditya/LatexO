@@ -1,5 +1,6 @@
-import sqlite3
 from pathlib import Path
+
+import pytest
 
 from latexo.checkpoint import load_checkpoint, save_checkpoints
 
@@ -24,7 +25,7 @@ def test_checkpoint_roundtrip_and_transaction(tmp_path: Path) -> None:
     assert loaded["payload"]["approval"] is True
 
     before = load_checkpoint(store, "t1")
-    try:
+    with pytest.raises(ValueError):
         save_checkpoints(
             store,
             [
@@ -37,7 +38,5 @@ def test_checkpoint_roundtrip_and_transaction(tmp_path: Path) -> None:
                 {"thread_id": "t3"},
             ],
         )
-    except Exception:
-        pass
     assert load_checkpoint(store, "t2") is None
     assert load_checkpoint(store, "t1") == before
